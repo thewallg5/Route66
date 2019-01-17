@@ -9,7 +9,6 @@ da aggiornare
 
 ### Authors
 
--
 - Oliveri Costanza
 - Ursini Gabriele
 - Vellei Gabriele 
