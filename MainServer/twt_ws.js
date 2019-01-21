@@ -2,7 +2,7 @@ const websocket = require('ws')
 const https = require('https')
 const oauth = require('oauth')
 
-const flag
+const flag = ÿ
 
 const server = https.createServer()
 
