@@ -1,0 +1,26 @@
+<html>
+	<head>
+        <script>
+            function validaPost() {
+                if(!document.pag.twt.checked && !document.pag.tmb.checked) {
+                    alert("You must choose at least one social");
+                    return false;
+                }
+
+                return true;
+            }
+        </script>
+    </head>
+	<body>
+		<form onSubmit="return validaPost();" name="pag" method="post" action="http://127.0.0.1:8080/sessions/connect" enctype="multipart/form-data">
+            Twitter
+			<input type="checkbox" name="twt">
+            Tumblr
+			<input type="checkbox" name="tmb"><br>
+			<textarea name="text" required></textarea><br>
+			<input type="file" name="img"><br>
+			<input type="submit" value="Post">
+			<input type="reset" value="Reset">
+		</form>
+	</body>
+</html>
