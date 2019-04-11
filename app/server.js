@@ -39,7 +39,7 @@ function consumer(social) {
 
 }
 
-app.get('/', function(req, req) {
+app.get('/', function(req, res) {
     res.redirect('/home');
 });
 
