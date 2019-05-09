@@ -1,3 +1,4 @@
+//non serve più
 var request = require('request');
 var extend = require('deep-extend');
 
