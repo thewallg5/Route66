@@ -9,12 +9,6 @@ La pagina web cui l'utente si connette e che fornisce il servizio è Route66.
 - Ursini Gabriele
 - Vellei Gabriele 
 
-
-### How to use
-- Selezionare il social network su cui si vuole postare
-- Scrivere il proprio stato e/o selezionare il file da caricare
-- Posta!
-
 ### HOW TO RUN
 
 Dipendenze: node.js, rabbitmq
