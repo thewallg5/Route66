@@ -41,7 +41,11 @@ function consumer(social) {
 		case 'tmb':
             return new oauth.OAuth("https://www.tumblr.com/oauth/request_token", "https://www.tumblr.com/oauth/access_token",
             "DLYFx2gqOL1s3gWprrDrQyNs0Hh5tmOFlH0I74e6HStCmCjGZR", "nT7LqTkSrCdtusSYs7V2wv1TRgipBZ9p66vzyXtamklPGckw3B", "1.0A",
-            "http://127.0.0.1:8080/sessions/callback?social=tmb", "HMAC-SHA1");
+			"http://127.0.0.1:8080/sessions/callback?social=tmb", "HMAC-SHA1");
+		case 'flk':
+			return new oauth.OAuth("https://www.flickr.com/services/oauth/request_token", "https://www.flickr.com/services/oauth/access_token",
+            "23c71e25b96c7a2894d42a51ce3fb511", "92ebd7ccc3d4dee4", "1.0A",
+			"http://127.0.0.1:8080/sessions/callback?social=flk", "HMAC-SHA1");
 	}
 
 }
@@ -59,6 +63,7 @@ app.post('/sessions/connect', upload.single('img'), function(req, res) {
 	var req_list = [];
 	if(req.body.twt == 'on') req_list.push('twt');	//controllo nel form se twt o tmb sono selezionati e li metto nell'array...
 	if(req.body.tmb == 'on') req_list.push('tmb');
+	if(req.body.flk == 'on') req_list.push('flk');
 
 	req_list.forEach(function(social) {
 		consumer(social).getOAuthRequestToken(function(error, oauthToken, oauthTokenSecret, results) {
@@ -87,6 +92,8 @@ function redirUrl(social, oauthToken) {  //funzione che serve nel redirect all'i
 		return "https://twitter.com/oauth/authorize?oauth_token="+oauthToken;
 	if(social == 'tmb')
 		return "https://www.tumblr.com/oauth/authorize?oauth_token="+oauthToken;
+	if(social == 'flk')
+		return "https://www.flickr.com/services/oauth/authorize?oauth_token="+oauthToken;
 }
 
 app.get('/sessions/callback', function(req, res) {
@@ -105,7 +112,6 @@ app.get('/sessions/callback', function(req, res) {
             req.session.oauthAccessToken = oauthAccessToken;
             req.session.oauthAccessTokenSecret = oauthAccessTokenSecret;
 		
-			//prima consumer(social).get("https://api.twitter.com/1.1/account/verify_credentials.json", req.session.oauthAccessToken, req.session.oauthAccessTokenSecret,function (error, data, response) {
             consumer(social).get(redirVer(social), req.session.oauthAccessToken, req.session.oauthAccessTokenSecret,function (error, data, response) {
                     if(error) {
 						res.status(500).send(error);
@@ -138,6 +144,8 @@ function redirVer(social) {  //funzione che serve nel verificare quale social è
 	if(social == 'twt')
 		return "https://api.twitter.com/1.1/account/verify_credentials.json";
 	if(social == 'tmb')
+		return "http://127.0.0.1:8080/home";
+	if(social == 'flk')
 		return "http://127.0.0.1:8080/home";
 }
 
