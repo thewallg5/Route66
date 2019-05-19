@@ -1,26 +1,65 @@
 <html>
 	<head>
+        <title>Route66</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all">
+        <style>
+        .container {
+  max-width: 960px;
+}
+
+.lh-condensed { line-height: 1.25; }
+</style>
         <script>
             function validaPost() {
-                if(!document.pag.twt.checked && !document.pag.tmb.checked) {
-                    alert("You must choose at least one social");
+                if(!document.pag.twt.checked && !document.pag.tmb.checked && !document.pag.flk.checked) {
+                    alert("Devi scegliere almeno un social");
+                    return false;
+                }
+                if (!document.pag.img.checked && document.pag.flk.checked) {
+                    alert("Selezionando Flickr devi caricare un'immagine");
                     return false;
                 }
 
                 return true;
             }
+
+
+            
         </script>
     </head>
-	<body>
-		<form onSubmit="return validaPost();" name="pag" method="post" action="http://127.0.0.1:8080/sessions/connect" enctype="multipart/form-data">
-            Twitter
-			<input type="checkbox" name="twt">
-            Tumblr
-			<input type="checkbox" name="tmb"><br>
-			<textarea name="text" required></textarea><br>
-			<input type="file" name="img"><br>
+
+	<body class="bg-light">
+
+    <div class="container">
+        <div class="py-5 text-center">
+            <img class="d-block mx-auto mb-4" src="" alt="" width="72" height="72">
+            <h2>Route 66</h2>
+            <p class="lead">Pubblica il tuo post dove vuoi!</p>
+        </div>
+        <center><h4 class="mb-3">Social</h4>
+        <!-- Qui prendo le informazioni -->
+
+		<form onSubmit="return validaPost();" name="pag" method="post" action="http://127.0.0.1:8080/sessions/connect" enctype="multipart/form-data" >
+            Twitter<input type="checkbox" name="twt">
+            Tumblr<input type="checkbox" name="tmb">
+            Flickr<input type="checkbox" name="flk"><br><br>
+			<textarea name="text" required></textarea><br><br>
+			<input type="file" name="img"><br><br>
 			<input type="submit" value="Post">
 			<input type="reset" value="Reset">
-		</form>
+        </form>
+        <!--   Qui terminano   -->
+
+
+        </center>
+        <footer class="my-5 pt-5 text-muted text-center text-small">
+            <p class="mb-1">&copy; Progetto Reti 2018-2019 di:</p>
+            <ul class="list-inline">
+                    <li class="list-inline-item"><a href="#">Costanza Oliveri</a></li>
+                    <li class="list-inline-item"><a href="#">Gabriele Ursini</a></li>
+                    <li class="list-inline-item"><a href="#">Gabriele Vellei</a></li>
+            </ul>
+        </footer>
+    </div>
 	</body>
 </html>
