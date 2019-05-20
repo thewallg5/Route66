@@ -6,11 +6,13 @@ var multer = require('multer');			//interazione con il form
 var upload = multer({ dest: 'uploads/' })
 var session = require('express-session');
 var queue = require('./queue.js');
+var path = require('path'); //CSS [Funziona per l'avvio, ma non al redirect]
 
 //var serviceInfo = require('service_info');
 
 
 var app = express();
+app.use(express.static(path.join(__dirname, 'css'))); //CSS [Funziona per l'avvio, ma non al redirect]
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
