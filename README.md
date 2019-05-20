@@ -15,6 +15,8 @@ Dipendenze: node.js, rabbitmq
 
 Porte richieste: 8080, 5672
 
+Packages: da installare aprendo su terminale la cartella app, tramite il comando npm install 
+
 ### License
 
 Il progetto è sotto la [Licensa MIT](https://github.com/thewallg5/Route66/blob/master/LICENSE)
