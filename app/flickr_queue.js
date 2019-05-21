@@ -1,6 +1,6 @@
 var amqp = require('amqplib/callback_api');
 var fs = require('file-system');
-var flk= require('./flickr.js');
+var Flickr = require('flickrapi');
 
 amqp.connect('amqp://localhost', function(err, conn) { //apriamo una connessione
 	conn.createChannel(function(err, ch) {  //e un canale 'ch'
@@ -14,65 +14,33 @@ amqp.connect('amqp://localhost', function(err, conn) { //apriamo una connessione
 
 				console.log("msg received by flk queue");
 				var l = msg.content.toString().split('0xFF');
-                console.log(l);
+        
+				console.log(l);
 
-                var client = new flk.Flickr({
-					consumer_key: "23c71e25b96c7a2894d42a51ce3fb511",
-					consumer_secret: "92ebd7ccc3d4dee4",
-					access_token_key: l[2],
-					access_token_secret: l[3]
-				});
+        console.log("Uploading img...");
 
+        var FlickrOptions = {
+          api_key: "23c71e25b96c7a2894d42a51ce3fb511",
+          secret: "92ebd7ccc3d4dee4",
+          access_token: l[2],
+          access_token_secret: l[3]
+        };
 
+        var uploadOptions = {
+	  			photos: [{
+	    			title: l[0],
+	    			description: "Posted with Route66",
+	    			photo: __dirname + "/" + l[1]
+	  			}]
+				};
+          
+				Flickr.upload(uploadOptions, FlickrOptions, function(err, res) {
+          if(err)
+            return console.error(err);
+          console.log("Posted successfully on Flickr");
+        });
 
-                console.log("checking img");
-
-                    //var data = fs.readFileSync(__dirname + '/' + l[1], { encoding: 'base64' });
-
-                    console.log("Uploading img...");
-					/*client.post({ 'media_data': data }, 'https://up.flickr.com/services/upload/',function(err, res, body) {
-                            if(err) console.log(err);
-                            
-                            console.log("RES:"+JSON.stringify(res));
-                            console.log("BODY:"+body);
-                           // var media_id = JSON.parse(body)["media_id_string"];*/
-
-
-                            var params ={
-                                photos: [{
-                                  title: "Postato da Route66",
-                                  description: l[0],
-                                  photo: l[1]
-                                }]
-                            };
-                            /*{
-                                'title': "Postato da Route66",
-                                'description': l[0],
-                                photo: l[1]
-
-                            };*/
-
-                            console.log(params);
-                            console.log(l);
-
-                            console.log("Ready 2 post");
-                            client.post(params, 'https://up.flickr.com/services/upload/', function(err, post, response) { //?media_id='+media_id
-                                if(err) {
-                                    console.log(err);
-                                }
-                                else {
-                                    console.log("POST: "+JSON.stringify(post));
-                                    console.log("RES: "+response);
-                                    console.log("Posted successfully on Flickr");
-                                }
-                        
-                    });
-
-
-            
-				
-
-}, { noAck: true }); //se è vero, il broker non si aspetta un riconoscimento dei messaggi consegnati a questo consumatore
+      }, { noAck: true }); //se è vero, il broker non si aspetta un riconoscimento dei messaggi consegnati a questo consumatore
 		});
 	});
 });
