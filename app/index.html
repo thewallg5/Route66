@@ -15,7 +15,7 @@
                     alert("Devi scegliere almeno un social");
                     return false;
                 }
-                if (!document.pag.img.checked && document.pag.flk.checked) {
+                if (document.pag.flk.checked && document.pag.img.value=="") {
                     alert("Selezionando Flickr devi caricare un'immagine");
                     return false;
                 }
