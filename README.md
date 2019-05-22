@@ -11,15 +11,16 @@ La pagina web cui l'utente si connette e che fornisce il servizio è Route66.
 
 ### How to run
 
-Dipendenze: node.js, rabbitmq
+__Dipendenze: node.js, rabbitmq
 
-Porte richieste: 8080, 5672
+__Porte richieste: 8080, 5672
 
-Packages: da installare aprendo su terminale la cartella app, tramite il comando npm install 
+1. installare [node.js](https://nodejs.org/it/download/)
+2. installare [rabbitmq](https://www.rabbitmq.com/#getstarted)
+3. Spostarsi nella cartella principale in app e lanciare `npm install package.json`
+4. Per farlo partire `node server.js twitter_queue.js tumblr_queue.js flickr_queue.js`
+5. Ora il servizio è accessibile in [localhost](http://localhost:8080)
 
 ### License
 
 Il progetto è sotto la [Licensa MIT](https://github.com/thewallg5/Route66/blob/master/LICENSE)
-      
-#### Logo copyright
-da aggiornare
