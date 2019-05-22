@@ -11,9 +11,9 @@ La pagina web cui l'utente si connette e che fornisce il servizio è Route66.
 
 ### How to run
 
-__Dipendenze: node.js, rabbitmq
+__Dipendenze:__ node.js, rabbitmq
 
-__Porte richieste: 8080, 5672
+__Porte richieste:__ 8080, 5672
 
 1. installare [node.js](https://nodejs.org/it/download/)
 2. installare [rabbitmq](https://www.rabbitmq.com/#getstarted)
