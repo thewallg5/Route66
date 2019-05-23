@@ -16,8 +16,6 @@ amqp.connect('amqp://localhost', function(err, conn) {//apriamo una connessione
 				var l = msg.content.toString().split('0xFF');
                 console.log(l);
 				var client = new twt.Twitter({
-					consumer_key: "K5zop9SI6nMHjaHR0OpUVxVOb",
-					consumer_secret: "vNeXNWaGKBwKpUTEgMsthGHoz35ADANl95r9EMhQqQSe16884f",
 					access_token_key: l[2],
 					access_token_secret: l[3]
 				});
