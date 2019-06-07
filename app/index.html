@@ -20,9 +20,20 @@
                     return false;
                 }
 
+		if(document.pag.twt.checked) post_on_social('twitter');
+                if(document.pag.tmb.checked) post_on_social('tumblr');
+                if(document.pag.flk.checked) post_on_social('flickr');
+
                 return true;
             }
 
+	    function post_on_social(social) {
+                var form = document.pag;
+                form.action = "http://127.0.0.1:8080/sessions/connect/"+social;
+                form.target = "_blank";
+                document.body.appendChild(form);
+                form.submit();
+            }
 
             
         </script>
@@ -39,7 +50,7 @@
         <center><h4 class="mb-3">Social</h4>
         <!-- Qui prendo le informazioni -->
 
-		<form onSubmit="return validaPost();" name="pag" method="post" action="http://127.0.0.1:8080/sessions/connect" enctype="multipart/form-data" >
+		<form onSubmit="return validaPost();" name="pag" method="post" action="" enctype="multipart/form-data" >
             Twitter<input type="checkbox" name="twt">
             Tumblr<input type="checkbox" name="tmb">
             Flickr<input type="checkbox" name="flk"><br><br>
