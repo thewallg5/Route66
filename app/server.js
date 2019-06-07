@@ -24,6 +24,7 @@ app.use(session( {
 
 
 var msgs = [];
+var req_list = {twt:{}, tmb:{}, flk:{}};
 
 class Msg {
 	constructor(oauthToken, txt, path) {
@@ -36,20 +37,20 @@ class Msg {
 function consumer(social) {
 	switch(social) {
 		case 'twt':
-			return new oauth.OAuth("https://twitter.com/oauth/request_token", "https://twitter.com/oauth/access_token",
+		return new oauth.OAuth("https://twitter.com/oauth/request_token", "https://twitter.com/oauth/access_token",
         	"K5zop9SI6nMHjaHR0OpUVxVOb", "vNeXNWaGKBwKpUTEgMsthGHoz35ADANl95r9EMhQqQSe16884f", "1.0A",
         	"http://127.0.0.1:8080/sessions/callback?social=twt", "HMAC-SHA1");
 
 		case 'tmb':
-            return new oauth.OAuth("https://www.tumblr.com/oauth/request_token", "https://www.tumblr.com/oauth/access_token",
-            "DLYFx2gqOL1s3gWprrDrQyNs0Hh5tmOFlH0I74e6HStCmCjGZR", "nT7LqTkSrCdtusSYs7V2wv1TRgipBZ9p66vzyXtamklPGckw3B", "1.0A",
-			"http://127.0.0.1:8080/sessions/callback?social=tmb", "HMAC-SHA1");
+            	return new oauth.OAuth("https://www.tumblr.com/oauth/request_token", "https://www.tumblr.com/oauth/access_token",
+            	"DLYFx2gqOL1s3gWprrDrQyNs0Hh5tmOFlH0I74e6HStCmCjGZR", "nT7LqTkSrCdtusSYs7V2wv1TRgipBZ9p66vzyXtamklPGckw3B", "1.0A",
+		"http://127.0.0.1:8080/sessions/callback?social=tmb", "HMAC-SHA1");
+		
 		case 'flk':
-			return new oauth.OAuth("https://www.flickr.com/services/oauth/request_token", "https://www.flickr.com/services/oauth/access_token",
-            "23c71e25b96c7a2894d42a51ce3fb511", "92ebd7ccc3d4dee4", "1.0A",
-			"http://127.0.0.1:8080/sessions/callback?social=flk", "HMAC-SHA1");
+		return new oauth.OAuth("https://www.flickr.com/services/oauth/request_token", "https://www.flickr.com/services/oauth/access_token",
+        	"23c71e25b96c7a2894d42a51ce3fb511", "92ebd7ccc3d4dee4", "1.0A",
+		"http://127.0.0.1:8080/sessions/callback?social=flk", "HMAC-SHA1");
 	}
-
 }
 
 app.get('/', function(req, res) {
@@ -61,83 +62,109 @@ app.get('/home', function(req, res) {
 });
 
 
-app.post('/sessions/connect', upload.single('img'), function(req, res) {
-	var req_list = [];
-	if(req.body.twt == 'on') req_list.push('twt');	//controllo nel form se twt o tmb sono selezionati e li metto nell'array...
-	if(req.body.tmb == 'on') req_list.push('tmb');
-	if(req.body.flk == 'on') req_list.push('flk');
+app.post('/sessions/connect/twitter', upload.single('img'), function(req, res) {
+	
+	consumer('twt').getOAuthRequestToken(function(error, oauthToken, oauthTokenSecret, results) {
+		if(error) {
+			console.log(error);
+			res.status(500).send("Twitter: failed trying request OAuth token: "+error)
+		}
+		else {
 
-	req_list.forEach(function(social) {
-		consumer(social).getOAuthRequestToken(function(error, oauthToken, oauthTokenSecret, results) {
-			if(error) {
-				console.log(error);
-				res.status(500).send(social+": failed trying request OAuth token: "+error)
-			}
-			else {
+			req_list['twt'][oauthToken] = oauthTokenSecret;
+			console.log("Twitter: got OAuth token: "+oauthToken+"\n");
+			var path = typeof(req.file);
+			if(path == 'undefined') path = "";
+			else path = req.file.path;
 
-                req.session.oauthRequestToken = oauthToken;
-                req.session.oauthRequestTokenSecret = oauthTokenSecret;
-				console.log(social+": got OAuth token: "+oauthToken+"\n");
-                var path = typeof(req.file);
-                if(path == 'undefined') path = "";
-                else path = req.file.path;
-
-				msgs.push(new Msg(req.session.oauthRequestToken, req.body.text, path));
-				res.redirect(redirUrl(social, req.session.oauthRequestToken));
-			}
-		});
+			msgs.push(new Msg(oauthToken, req.body.text, path));
+			res.redirect("https://twitter.com/oauth/authorize?oauth_token="+oauthToken);
+		}
 	});
 });
 
-function redirUrl(social, oauthToken) {  //funzione che serve nel redirect all'interno dell' app.post
-	if(social == 'twt')
-		return "https://twitter.com/oauth/authorize?oauth_token="+oauthToken;
-	if(social == 'tmb')
-		return "https://www.tumblr.com/oauth/authorize?oauth_token="+oauthToken;
-	if(social == 'flk')
-		return "https://www.flickr.com/services/oauth/authorize?oauth_token="+oauthToken;
-}
+app.post('/sessions/connect/tumblr', upload.single('img'), function(req, res) {
+	
+	consumer('tmb').getOAuthRequestToken(function(error, oauthToken, oauthTokenSecret, results) {
+		if(error) {
+			console.log(error);
+			res.status(500).send("Tumblr: failed trying request OAuth token: "+error)
+		}
+		else {
+
+			req_list['tmb'][oauthToken] = oauthTokenSecret;
+			console.log("Tumblr: got OAuth token: "+oauthToken+"\n");
+			var path = typeof(req.file);
+			if(path == 'undefined') path = "";
+			else path = req.file.path;
+
+			msgs.push(new Msg(oauthToken, req.body.text, path));
+			res.redirect("https://tumblr.com/oauth/authorize?oauth_token="+oauthToken);
+		}
+	});
+});
+
+app.post('/sessions/connect/flickr', upload.single('img'), function(req, res) {
+	
+	consumer('flk').getOAuthRequestToken(function(error, oauthToken, oauthTokenSecret, results) {
+		if(error) {
+			console.log(error);
+			res.status(500).send("Flickr: failed trying request OAuth token: "+error)
+		}
+		else {
+
+			req_list['flk'][oauthToken] = oauthTokenSecret;
+			console.log("Flickr: got OAuth token: "+oauthToken+"\n");
+			var path = typeof(req.file);
+			if(path == 'undefined') path = "";
+			else path = req.file.path;
+
+			msgs.push(new Msg(oauthToken, req.body.text, path));
+			res.redirect("https://www.flickr.com/services/oauth/authorize?oauth_token="+oauthToken);
+		}
+	});
+
+});
 
 app.get('/sessions/callback', function(req, res) {
 
-    var oauthRequestToken = req.query.oauth_token;
+    	var oauthRequestToken = req.query.oauth_token;
 	var social = req.query.social;
-    //console.log(social);
 
-	consumer(social).getOAuthAccessToken(req.session.oauthRequestToken, req.session.oauthRequestTokenSecret, req.query.oauth_verifier, function(error,oauthAccessToken, oauthAccessTokenSecret, results) {
+	consumer(social).getOAuthAccessToken(oauthRequestToken, req_list[social][oauthRequestToken], req.query.oauth_verifier, function(error,oauthAccessToken, oauthAccessTokenSecret, results) {
 		if(error) {
 			console.log(error);
 			res.status(500).send(social+": failed trying request access token: "+error);
 		}
 		else {
 
-            req.session.oauthAccessToken = oauthAccessToken;
-            req.session.oauthAccessTokenSecret = oauthAccessTokenSecret;
-		
-            consumer(social).get(redirVer(social), req.session.oauthAccessToken, req.session.oauthAccessTokenSecret,function (error, data, response) {
-                    if(error) {
-						res.status(500).send(error);
-						console.log("errore");
-                    }
-                    else {
-		
-                        var msgToPost;
-                        for(var i=0;i<msgs.length;i++) {
-                            if(msgs[i].oauthToken == req.session.oauthRequestToken) {
-								msgToPost = msgs[i];
-                                break;
-                            }
-                        }
+			req.session.oauthAccessToken = oauthAccessToken;
+			req.session.oauthAccessTokenSecret = oauthAccessTokenSecret;
 
-                        var auth_options = {
-                            access_token_key: req.session.oauthAccessToken,
-                            access_token_secret: req.session.oauthAccessTokenSecret
-                        };
-						
-                        queue.send(social, msgToPost, auth_options);  //entriamo in queue.js
-                        res.redirect('/home');
-                    }
-                });
+			consumer(social).get(redirVer(social), oauthAccessToken, oauthAccessTokenSecret,function (error, data, response) {
+				if(error) {
+					res.status(500).send(error);
+					console.log("errore");
+				}
+				else {
+
+					var msgToPost;
+					for(var i=0;i<msgs.length;i++) {
+					    if(msgs[i].oauthToken == oauthRequestToken) {
+						msgToPost = msgs[i];
+						break;
+					    }
+					}
+
+					var auth_options = {
+					    access_token_key: oauthAccessToken,
+					    access_token_secret: oauthAccessTokenSecret
+					};
+
+					queue.send(social, msgToPost, auth_options);  //entriamo in queue.js
+					res.send("<html><head></head><body>Posted successfully on "+social+"</body></html>");
+			    	}
+			});
 		}
 	});
 });
