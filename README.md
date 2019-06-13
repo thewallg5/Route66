@@ -19,7 +19,7 @@ __Porte richieste:__ 8080, 5672
 2. installare [rabbitmq](https://www.rabbitmq.com/#getstarted)
 3. Spostarsi nella cartella principale in app e lanciare `npm install`
 4. Lanciare il server rabbitmq secondo le modalità del proprio Sistema Operativo 
-5. Far partire Route66 con `node server.js twitter_queue.js tumblr_queue.js flickr_queue.js`
+5. Far partire Route66 con `node server.js twitter_queue.js tumblr_queue.js flickr_queue.js`(il comando può cambiare da sistema operativo ad un altro)
 6. Ora il servizio è accessibile in [localhost](http://localhost:8080)
 
 ### License
